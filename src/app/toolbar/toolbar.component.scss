@@ -1,7 +1,12 @@
-:host ::ng-deep{
-    .p-toolbar{
-        padding: 0px;
-        border-radius: 0px;
-        background: none;
+:host {
+  z-index: 1000;
+
+  ::ng-deep {
+    .p-toolbar {
+      height: 80px;
+      padding: 0px;
+      border-radius: 0px;
+      background: white;
     }
+  }
 }

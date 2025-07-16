@@ -1,9 +1,11 @@
-<app-toolbar></app-toolbar>
-<div class="grid h-full">
-  <div class="col-3 sidebar w-full h-full">
-    <app-sidebar></app-sidebar>
-  </div>
-  <div class="col-9">
-    <router-outlet></router-outlet>
+<div class="flex-column h-screen">
+  <app-toolbar></app-toolbar>
+  <div class="flex" style="height: calc(100% - 80px);">
+    <div class="w-2">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="w-10">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

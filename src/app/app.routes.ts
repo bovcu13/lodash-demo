@@ -1,6 +1,7 @@
+import { LangComponent } from './lang/lang.component';
 import { Routes } from '@angular/router';
-import { CollectionComponent } from './collection/collection.component';
 
 export const routes: Routes = [
-  { path: '', component: CollectionComponent },
+  { path: '', redirectTo: 'lang', pathMatch: 'full' },
+  { path: 'lang', component: LangComponent }
 ];

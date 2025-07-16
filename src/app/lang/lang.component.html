@@ -1,0 +1,155 @@
+<div class="overflow-auto h-full" #contentContainer>
+  @for (item of langList; track item) {
+  <div class="title-content" [attr.id]="item.label">{{item.label}}</div>
+  @if (item.label === '_.castArray') {
+  <ng-container *ngTemplateOutlet="castArray"></ng-container>
+  }
+  @if (item.label === '_.clone') {
+  <ng-container *ngTemplateOutlet="clone"></ng-container>
+  }
+  @if (item.label === '_.cloneDeep') {
+  <ng-container *ngTemplateOutlet="cloneDeep"></ng-container>
+  }
+  @if (item.label === '_.cloneDeepWith') {
+  <ng-container *ngTemplateOutlet="cloneDeepWith"></ng-container>
+  }
+  @if (item.label === '_.cloneWith') {
+  <ng-container *ngTemplateOutlet="cloneWith"></ng-container>
+  }
+  @if (item.label === '_.conformsTo') {
+  <ng-container *ngTemplateOutlet="conformsTo"></ng-container>
+  }
+  @if (item.label === '_.eq') {
+  <ng-container *ngTemplateOutlet="eq"></ng-container>
+  }
+  @if (item.label === '_.gt') {
+  <ng-container *ngTemplateOutlet="gt"></ng-container>
+  }
+  @if (item.label === '_.gte') {
+  <ng-container *ngTemplateOutlet="gte"></ng-container>
+  }
+  @if (item.label === '_.isArguments') {
+  <ng-container *ngTemplateOutlet="isArguments"></ng-container>
+  }
+  @if (item.label === '_.isArray') {
+  <ng-container *ngTemplateOutlet="isArray"></ng-container>
+  }
+  @if (item.label === '_.isArrayBuffer') {
+  <ng-container *ngTemplateOutlet="isArrayBuffer"></ng-container>
+  }
+  @if (item.label === '_.isArrayLike') {
+  <ng-container *ngTemplateOutlet="isArrayLike"></ng-container>
+  }
+  @if (item.label === '_.isArrayLikeObject') {
+  <ng-container *ngTemplateOutlet="isArrayLikeObject"></ng-container>
+  }
+  @if (item.label === '_.isBoolean') {
+  <ng-container *ngTemplateOutlet="isBoolean"></ng-container>
+  }
+  <div class="code-content">
+    <pre><code class="language-typescript" [innerHTML]="item.code"></code></pre>
+  </div>
+  }
+</div>
+
+<ng-template #castArray>
+  <div class="text-content">
+    不管你給它什麼東西，它都會幫你包成一個陣列
+  </div>
+</ng-template>
+
+<ng-template #clone>
+  <div class="text-content">
+    淺拷貝，只複製了最外層的東西<br>
+    用展開運算子 {{ '{...}' }} 是同樣的效果
+  </div>
+</ng-template>
+
+<ng-template #cloneDeep>
+  <div class="text-content">
+    深拷貝，複製整份
+  </div>
+</ng-template>
+
+<ng-template #cloneDeepWith>
+  <div class="text-content">
+    深拷貝，遇到特殊需求可以自己決定怎麼複製
+  </div>
+</ng-template>
+
+<ng-template #cloneWith>
+  <div class="text-content">
+    淺拷貝，遇到特殊需求可以自己決定怎麼複製
+  </div>
+</ng-template>
+
+<ng-template #conformsTo>
+  <div class="text-content">
+    檢查物件的每個屬性有沒有符合自訂的條件
+  </div>
+</ng-template>
+
+<ng-template #eq>
+  <div class="text-content">
+    跟 === 很像，但它能正確處理 NaN<br>
+    簡單來說: 判斷兩個值是不是一模一樣，連 NaN 也能判斷
+  </div>
+</ng-template>
+
+<ng-template #gt>
+  <div class="text-content">
+    跟 > 很像，用來判斷第一個值是否大於第二個值<br>
+    平常用法下沒什麼差別，可以視為一樣
+  </div>
+</ng-template>
+
+<ng-template #gte>
+  <div class="text-content">
+    跟 >= 一樣，用來判斷第一個值是否大於或等於第二個值
+  </div>
+</ng-template>
+
+<ng-template #isArguments>
+  <div class="text-content">
+    判斷是不是函式裡的 arguments 物件<br>
+    arguments 物件: 函式裡自帶的，用來存所有傳進來參數的物件<br>
+    使用頻率非常低
+  </div>
+</ng-template>
+
+<ng-template #isArray>
+  <div class="text-content">
+    判斷是不是一個陣列<br>
+    跟原生的 Array.isArray() 功能一樣
+  </div>
+</ng-template>
+
+<ng-template #isArrayBuffer>
+  <div class="text-content">
+    判斷是不是一個 ArrayBuffer 物件<br>
+    ArrayBuffer: 用來存二進位資料的物件<br>
+    跟原生的 value instanceof ArrayBuffer 用法很像，但 Lodash 會多處理一些跨 iframe 或跨 realm 的情境
+  </div>
+</ng-template>
+
+<ng-template #isArrayLike>
+  <div class="text-content">
+    判斷能不能像陣列一樣用索引和 length 操作<br>
+    ex: 字串、陣列、NodeList 都能用
+  </div>
+</ng-template>
+
+<ng-template #isArrayLikeObject>
+  <div class="text-content">
+    判斷是不是物件型態，且能像陣列一樣用 length 和索引操作<br>
+    跟 <code class="language-text">_.isArrayLike</code> 差別： <code class="language-text">_.isArrayLike</code> 會對字串回傳
+    true，<code class="language-text">_.isArrayLikeObject</code> 不會。
+  </div>
+</ng-template>
+
+<ng-template #isBoolean>
+  <div class="text-content">
+    判斷是不是布林型態<br>
+    跟原生的 typeof value === 'boolean' 很像
+  </div>
+</ng-template>
