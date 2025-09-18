@@ -20,7 +20,7 @@ export class SidebarComponent implements OnInit {
     this.items = [
       {
         label: 'Lang',
-        expanded: true,
+        expanded: false,
         routerLink: ['/lang'],
         items: [
           {
@@ -85,7 +85,72 @@ export class SidebarComponent implements OnInit {
           }
         ]
       },
-    ];
+      {
+        label: 'Object',
+        expanded: true,
+        routerLink: ['/object'],
+        items: [
+          {
+            label: '_.omit',
+            command: () => this.labelClick('_.omit'),
+          },
+          {
+            label: '_.omitBy',
+            command: () => this.labelClick('_.omitBy'),
+          },
+          {
+            label: '_.pick',
+            command: () => this.labelClick('_.pick'),
+          },
+          {
+            label: '_.pickBy',
+            command: () => this.labelClick('_.pickBy'),
+          },
+          {
+            label: '_.result',
+            command: () => this.labelClick('_.result'),
+          },
+          {
+            label: '_.set',
+            command: () => this.labelClick('_.set'),
+          },
+          {
+            label: '_.setWith',
+            command: () => this.labelClick('_.setWith'),
+          },
+          {
+            label: '_.toPairs',
+            command: () => this.labelClick('_.toPairs'),
+          },
+          {
+            label: '_.toPairsIn',
+            command: () => this.labelClick('_.toPairsIn'),
+          },
+          {
+            label: '_.transform',
+            command: () => this.labelClick('_.transform'),
+          },
+          {
+            label: '_.unset',
+            command: () => this.labelClick('_.unset'),
+          },
+          {
+            label: '_.update',
+            command: () => this.labelClick('_.update'),
+          },
+          {
+            label: '_.updateWith',
+            command: () => this.labelClick('_.updateWith'),
+          },
+          {
+            label: '_.values',
+            command: () => this.labelClick('_.values'),
+          },
+          {
+            label: '_.valuesIn',
+            command: () => this.labelClick('_.valuesIn'),
+          }]
+      }];
   }
 
   labelClick(label: string) {

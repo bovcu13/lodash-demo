@@ -1,0 +1,394 @@
+<div class="overflow-auto h-full">
+  <!-- omit -->
+  <div class="title-content" [attr.id]="'_.omit'">_.omit(object, [paths])</div>
+  <div class="text-content">
+    用來回傳一個新物件<br>
+    從原本的物件中，移除不想要的屬性，產生一個新的物件<br>
+    object：原始物件<br>
+    [paths]：不想要的屬性名稱（字串或字串陣列）<br>
+    <code class="language-typescript">_.omit</code> 效能比 <code class="language-typescript">_.pick</code> 慢 (跟 <code
+      class="language-typescript">_.omit</code> 相反的一個方法，只留要的)
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：移除password
+const user = &#123; id: 1, name: 'Amy', password: '1234' &#125;;
+const safeUser = _.omit(user, ['password']);
+// 結果：&#123; id: 1, name: 'Amy' &#125;
+
+// 原生寫法
+const &#123; password, ...rest &#125; = user;
+
+// 可以用字串 'a.b' 指定要省略「巢狀」的屬性
+const obj = &#123; a: &#123; b: 1 &#125;, c: 2 &#125;;
+const result = _.omit(obj, ['a.b']); // a.b 會被省略
+  </code></pre>
+  </div>
+
+  <!-- omitBy -->
+  <div class="title-content" [attr.id]="'_.omitBy'">_.omitBy(object, [predicate=_.identity])</div>
+  <div class="text-content">
+    回傳一個新物件，移除符合條件的屬性<br>
+    - <b>object</b>：原始物件<br>
+    - <b>predicate</b>：決定哪些屬性要被移除的 Function ，預設會移除值為 true 的屬性。<br>
+    可搭配 <code>_.isNil</code>、<code>_.isEmpty</code> 等 Lodash 方法。
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：移除值為 null 或 undefined 的屬性
+const obj = &#123; a: 1, b: null, c: 3, d: undefined &#125;;
+const cleanObj = _.omitBy(obj, v => v == null);
+// 結果：&#123; a: 1, c: 3 &#125;
+
+// 也可以搭配 lodash 的 isNil
+const cleanObj2 = _.omitBy(obj, _.isNil);
+
+// TypeScript 原生寫法（Object.entries + reduce）(或filter)
+const cleanObj3 = Object.entries(obj)
+  .filter(([, v]) => v != null)
+  .reduce((acc, [k, v]) => (acc[k] = v, acc), &#123;&#125;);
+  </code></pre>
+  </div>
+
+  <!-- _.pick(object, [paths]) -->
+  <div class="title-content" [attr.id]="'_.pick'">_.pick(object, [paths])</div>
+  <div class="text-content">
+    回傳一個新物件，只留下指定的<br>
+    - <b>object</b>：原始物件<br>
+    - <b>paths</b>：要保留的屬性名稱（字串或字串陣列）<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：只保留 id 和 name
+const user = &#123; id: 1, name: 'Amy', password: '1234' &#125;;
+const publicUser = _.pick(user, ['id', 'name']);
+// 結果：&#123; id: 1, name: 'Amy' &#125;
+
+// 巢狀屬性
+const obj = &#123; a: &#123; b: 1, c: 2 &#125;, d: 3 &#125;;
+const picked = _.pick(obj, ['a.b', 'd']);
+// 結果：&#123; a: &#123; b: 1 &#125;, d: 3 &#125;
+
+// 原生寫法
+const &#123; id, name &#125; = user;
+const publicUser2 = &#123; id, name &#125;;
+  </code></pre>
+  </div>
+
+  <!-- _.pickBy(object, [predicate=_.identity]) -->
+  <div class="title-content" [attr.id]="'_.pickBy'">_.pickBy(object, [predicate=_.identity])</div>
+  <div class="text-content">
+    回傳一個新物件，只留下符合條件的<br>
+    - <b>object</b>：原始物件<br>
+    - <b>predicate</b>：決定哪些屬性要被保留的 Function，預設只保留值為 true 的屬性。<br>
+    可搭配 <code>_.isNumber</code>、<code>_.isString</code> 等 Lodash 方法。
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 只保留值為數字的屬性
+const obj = &#123; a: 1, b: null, c: 'hi', d: 2 &#125;;
+const numbers = _.pickBy(obj, _.isNumber);
+// 結果：&#123; a: 1, d: 2 &#125;
+
+// 只保留非空字串
+const obj2 = &#123; a: '', b: 'hello', c: null &#125;;
+const nonEmpty = _.pickBy(obj2, v => typeof v === 'string' && v.length > 0);
+// 結果：&#123; b: 'hello' &#125;
+
+// TypeScript 原生寫法（Object.entries + reduce）
+const numbers2 = Object.entries(obj)
+  .filter(([, v]) => typeof v === 'number')
+  .reduce((acc, [k, v]) => (acc[k] = v, acc), &#123;&#125;);
+  </code></pre>
+  </div>
+
+  <!-- _.result(object, path, [defaultValue]) -->
+  <div class="title-content" [attr.id]="'_.result'">_.result(object, path, [defaultValue])</div>
+  <div class="text-content">
+    傳指定位置 <b>path</b> 取得 <b>object</b> 的值，取出來的東西是 function 的話會執行然後回傳結果<br>
+    找不到的話會回傳 <b>defaultValue</b>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// Lodash 寫法
+const obj = &#123; a: [&#123; b: &#123; c: 3 &#125; &#125;], fn: () => 42 &#125;;
+const val1 = _.result(obj, 'a[0].b.c');        // 3
+const val2 = _.result(obj, 'a[0].b.x', '預設'); // '預設'
+const val3 = _.result(obj, 'fn');              // 42（執行function）
+
+// 原生寫法（僅存取，不會自動執行函式）
+const val1n = obj?.a?.[0]?.b?.c ?? '預設';
+// 要執行 function 需額外判斷
+const val3n = typeof obj.fn === 'function' ? obj.fn() : undefined;
+
+// 補充
+// - _.result 可以用字串或陣列指定路徑
+const obj = &#123; a: [&#123; b: &#123; c: 3 &#125; &#125;] &#125;;
+
+// 字串路徑
+_.result(obj, 'a[0].b.c'); // 3
+
+// 陣列路徑
+_.result(obj, ['a', 0, 'b', 'c']); // 3
+
+// - 如果找不到屬性，defaultValue 也可以給 function ，會自動執行取得預設值
+// - 原生寫法速度較快，但沒辦法自動執行 function
+  </code></pre>
+  </div>
+
+  <!-- _.set(object, path, value) -->
+  <div class="title-content" [attr.id]="'_.set'">_.set(object, path, value)</div>
+  <div class="text-content">
+    根據位置 <b>path</b>，將 <b>object</b> 的巢狀屬性設為 <b>value</b>，如果沒找到會自動建立<br>
+    感覺是比較方便去直接建立或更新比較深層的物件結構<br>
+    但如果早就知道物件結構的話我覺得原生寫法更好
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// Lodash 寫法
+const obj = &#123;&#125;;
+_.set(obj, 'a[0].b.c', 5);
+// 結果：obj = &#123; a: [ &#123; b: &#123; c: 5 &#125; &#125; ] &#125;
+
+// 也可以用陣列路徑
+_.set(obj, ['x', 'y', 'z'], 10);
+// 結果：obj = &#123; a: [ &#123; b: &#123; c: 5 &#125; &#125; ], x: &#123; y: &#123; z: 10 &#125; &#125; &#125;
+
+// 原生寫法 要一層一層去建立 等於使用 _.set(obj, 'a[0].b.c', 5)
+obj.a = obj.a || [];
+obj.a[0] = obj.a[0] || &#123;&#125;;
+obj.a[0].b = obj.a[0].b || &#123;&#125;;
+obj.a[0].b.c = 5;
+  </code></pre>
+  </div>
+
+  <!-- _.setWith(object, path, value, [customizer]) -->
+  <div class="title-content" [attr.id]="'_.setWith'">_.setWith(object, path, value, [customizer])</div>
+  <div class="text-content">
+    和 <code>_.set</code> 類似<br>
+    根據路徑 <b>path</b> 設定 <b>value</b> 到 <b>object</b> 上<br>
+    差別在於可以透過<b>customizer function</b>來決定建立方式<br>
+    感覺set本身就很不錯用了，也可搭配get使用，setWith有點抽象的感覺
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+      // 範例：強制中間層用物件建立，結果是陣列裡面包物件
+      const obj = &#123;&#125;;
+      _.setWith(obj, '[0].a.b', 5, Object);
+      // 結果：obj = [ &#123; a: &#123; b: 5 &#125; &#125; ]
+
+      // 自訂建立行為：每一層都建立成陣列
+      const obj2 = &#123;&#125;;
+      _.setWith(obj2, 'a.b.c', 123, () => []);
+      // 結果：obj2 = &#123; a: [] &#125; → 注意因為 customizer function 回傳陣列會取代物件
+</code></pre>
+  </div>
+
+  <!-- _.toPairs(object) -->
+  <!-- _.toPairs(object) -->
+  <div class="title-content" [attr.id]="'_.toPairs'">_.toPairs(object)</div>
+  <div class="text-content">
+    把物件轉成一組 [key, value] 陣列，類似 Object.entries (效能幾乎一樣，通常原生快一點)<br>
+    常用於把物件轉成陣列，方便做 map 或 filter 操作
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：依 value 排序
+const obj = &#123; a: 3, b: 1, c: 2 &#125;;
+const sorted = _.toPairs(obj).sort((a, b) => a[1] - b[1]);
+// 結果：[['b', 1], ['c', 2], ['a', 3]]
+
+// 原生寫法
+const sorted2 = Object.entries(obj).sort((a, b) => a[1] - b[1]);
+
+// 繼承的屬性不會被包含
+const parent = &#123; x: 1 &#125;;
+const child = Object.create(parent);
+child.y = 2;
+
+_.toPairs(child); // 只會得到 [['y', 2]]
+</code></pre>
+  </div>
+
+  <!-- _.toPairsIn(object) -->
+  <div class="title-content" [attr.id]="'_.toPairsIn'">_.toPairsIn(object)</div>
+  <div class="text-content">
+    把物件「本身和繼承來的」所有可列舉屬性都轉成 <code>[key, value]</code> 陣列。<br>
+    可以直接拿來給 _.fromPairs 轉回物件
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例
+const parent = &#123; x: 1 &#125;;
+const child = Object.create(parent);
+child.y = 2;
+
+const pairs = _.toPairsIn(child);
+// 結果：[['y', 2], ['x', 1]]
+
+// 原生寫法
+const pairs2 = [];
+for (let key in child) &#123;
+  pairs2.push([key, child[key]]);
+&#125;
+// 結果同上：[['y', 2], ['x', 1]]
+  </code></pre>
+  </div>
+
+  <!-- _.transform(object, [iteratee=_.identity], [accumulator]) -->
+  <div class="title-content" [attr.id]="'_.transform'">_.transform(object, [iteratee=_.identity], [accumulator])</div>
+  <div class="text-content">
+    依序遍歷 <b>object</b> 的屬性，透過 <b>iteratee</b> 處理 (每次要執行的function) 並把結果存進 <b>accumulator</b><br>
+    類似 <code>Array.reduce</code>，但可用於物件、陣列等，且可提早中斷。
+    <br><br>
+    <b>補充：</b><br>
+    <ul>
+      <li><code>_.transform</code> 跟 <code>_.reduce</code> 很像，但 transform 可以直接改內容，不用每次 return。</li>
+      <li>很適合處理物件、陣列，或是需要把資料轉成新結構的時候。</li>
+      <li>累加器（accumulator）可以是物件、陣列，想怎麼用都行。</li>
+      <li>如果 iteratee 回傳 false，可以馬上停止遍歷。</li>
+      <li>簡單說：reduce 比較適合單純累加，transform 比較適合動態組資料、彈性大。</li>
+    </ul>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：將物件的 value 全部平方
+const obj = &#123; a: 2, b: 3, c: 4 &#125;;
+const result = _.transform(obj, (acc, value, key) => &#123;
+  acc[key] = value * value;
+&#125;, &#123;&#125;);
+// 結果：&#123; a: 4, b: 9, c: 16 &#125;
+
+// 範例：只收集 value 為偶數的 key
+const evenKeys = _.transform(obj, (acc, value, key) => &#123;
+  if (value % 2 === 0) acc.push(key);
+&#125;, []);
+// 結果：['a', 'c']
+  </code></pre>
+  </div>
+
+  <!-- _.unset(object, path) -->
+  <div class="title-content" [attr.id]="'_.unset'">_.unset(object, path)</div>
+  <div class="text-content">
+    根據 <b>path</b>，把 <b>object</b> 的屬性刪除（支援巢狀）。<br>
+    如果屬性存在會移除，回傳 true；不存在會回傳 false。
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：移除巢狀屬性
+const obj = &#123; a: [&#123; b: 1 &#125;], c: 2 &#125;;
+_.unset(obj, 'a[0].b');
+// 結果：obj = &#123; a: [&#123; &#125;], c: 2 &#125;
+
+// 也可以用陣列路徑
+_.unset(obj, ['c']);
+// 結果：obj = &#123; a: [&#123; &#125;] &#125;
+
+// 原生寫法（只支援已知層級）
+delete obj.a[0].b;
+delete obj.c;
+
+// 補充
+// - _.unset 會自動處理不存在的路徑，不會報錯
+  </code></pre>
+  </div>
+
+  <!-- _.update(object, path, updater) -->
+  <div class="title-content" [attr.id]="'_.update'">_.update(object, path, updater)</div>
+  <div class="text-content">
+    根據 <b>path</b> 找到 <b>object</b> 的巢狀屬性，並用 <b>updater</b> function更新值。<br>
+    如果路徑不存在，會自動建立。
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：將巢狀屬性加 1
+const obj = &#123; a: [&#123; b: 1 &#125;] &#125;;
+_.update(obj, 'a[0].b', n => n + 1);
+// 結果：obj = &#123; a: [&#123; b: 2 &#125;] &#125;
+
+// 路徑不存在時會自動建立
+_.update(obj, 'x.y', n => (n || 0) + 5);
+// 結果：obj = &#123; a: [&#123; b: 2 &#125;], x: &#123; y: 5 &#125; &#125;
+
+// 原生寫法（只支援已知層級）
+obj.a[0].b = obj.a[0].b + 1;
+obj.x = obj.x || &#123;&#125;;
+obj.x.y = (obj.x.y || 0) + 5;
+
+// 補充
+// - _.update 很像 _.set，但多了一個 updater function，可以根據原本的值做更多處理
+// - 如果只是單純指定新值，用 _.set 就好；如果要更新舊值，用 _.update 更方便
+// - 支援字串或陣列路徑，會自動建立不存在的層級
+  </code></pre>
+  </div>
+
+  <!-- _.updateWith(object, path, updater, [customizer]) -->
+  <div class="title-content" [attr.id]="'_.updateWith'">_.updateWith(object, path, updater, [customizer])</div>
+  <div class="text-content">
+    和 <code>_.update</code> 類似，根據 <b>path</b> 找到 <b>object</b> 的巢狀屬性，並用 <b>updater</b> function 更新值。<br>
+    差別在於可以傳 <b>customizer</b> function，決定中間層要建立成什麼型別（物件或陣列）。<br>
+
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例：強制中間層用物件建立
+const obj = &#123;&#125;;
+_.updateWith(obj, '[0].a.b', n => (n || 0) + 1, Object);
+// 結果：obj = [ &#123; a: &#123; b: 1 &#125; &#125; ]
+
+// 範例：每一層都建立成陣列
+const obj2 = &#123;&#125;;
+_.updateWith(obj2, 'a.b.c', n => (n || 0) + 1, () => []);
+// 結果：obj2 = &#123; a: [] &#125; （customizer 回傳陣列會取代預設物件）
+
+// 補充
+// - [customizer] 只在要建立新層級時才會被呼叫
+  </code></pre>
+  </div>
+
+  <!-- _.values(object) -->
+  <div class="title-content" [attr.id]="'_.values'">_.values(object)</div>
+  <div class="text-content">
+    把物件的所有「值」取出來，變成一個陣列。<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例
+const obj = &#123; a: 1, b: 2, c: 3 &#125;;
+const vals = _.values(obj);
+// 結果：[1, 2, 3]
+
+// 原生寫法
+const vals2 = Object.values(obj);
+// 結果：[1, 2, 3]
+
+  </code></pre>
+  </div>
+
+  <!-- _.valuesIn(object) -->
+  <div class="title-content" [attr.id]="'_.valuesIn'">_.valuesIn(object)</div>
+  <div class="text-content">
+    把物件「本身和繼承」來的值都取出來，變成一個陣列。<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 範例
+const parent = &#123; x: 1 &#125;;
+const child = Object.create(parent);
+child.y = 2;
+
+const vals = _.valuesIn(child);
+// 結果：[2, 1]
+
+// 原生寫法
+const vals2 = [];
+for (let key in child) &#123;
+  vals2.push(child[key]);
+&#125;
+// 結果同上：[2, 1]
+
+// 補充
+// - _.values 只取物件本身的屬性值，_.valuesIn 會包含繼承來的
+  </code></pre>
+  </div>
+</div>

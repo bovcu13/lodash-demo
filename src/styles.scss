@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-html, body{
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -11,4 +12,20 @@ html, body{
 // 自動換行
 pre {
   white-space: pre-wrap;
+}
+
+.title-content {
+  background-color: #EEE;
+  padding: 30px 60px;
+  font-size: 32px;
+}
+
+.text-content {
+  padding: 20px 30px;
+  font-size: 24px;
+}
+
+.code-content {
+  font-size: 18px;
+  background-color: #283646;
 }
