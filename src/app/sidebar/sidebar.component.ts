@@ -87,7 +87,7 @@ export class SidebarComponent implements OnInit {
       },
       {
         label: 'Object',
-        expanded: true,
+        expanded: false,
         routerLink: ['/object'],
         items: [
           {
@@ -150,6 +150,57 @@ export class SidebarComponent implements OnInit {
             label: '_.valuesIn',
             command: () => this.labelClick('_.valuesIn'),
           }]
+      },
+      {
+        label: 'Util',
+        expanded: true,
+        routerLink: ['/util'],
+        items: [
+          {
+            label: '_.method',
+            command: () => this.labelClick('_.method'),
+          },
+          {
+            label: '_.property',
+            command: () => this.labelClick('_.property'),
+          },
+          {
+            label: '_.methodOf',
+            command: () => this.labelClick('_.methodOf'),
+          },
+          {
+            label: '_.propertyOf',
+            command: () => this.labelClick('_.propertyOf'),
+          },
+          {
+            label: '_.mixin',
+            command: () => this.labelClick('_.mixin'),
+          },
+          {
+            label: '_.noConflict',
+            command: () => this.labelClick('_.noConflict'),
+          },
+          {
+            label: '_.noop',
+            command: () => this.labelClick('_.noop'),
+          },
+          {
+            label: '_.nthArg',
+            command: () => this.labelClick('_.nthArg'),
+          },
+          {
+            label: '_.over',
+            command: () => this.labelClick('_.over'),
+          },
+          {
+            label: '_.overEvery',
+            command: () => this.labelClick('_.overEvery'),
+          },
+          {
+            label: '_.overSome',
+            command: () => this.labelClick('_.overSome'),
+          },
+        ]
       }];
   }
 

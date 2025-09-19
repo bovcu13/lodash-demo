@@ -1,0 +1,368 @@
+<div class="overflow-auto h-full">
+  <!-- method -->
+  <div class="title-content" [attr.id]="'_.method'">_.method(path, [args])</div>
+  <div class="text-content">
+    產生一個函式<br>
+    這個函式會去呼叫「指定物件路徑上的方法」<br>
+    要告訴它 方法的位置（path） <br>
+    和 要傳的參數（args）<br>
+    - 先設定好要呼叫哪個方法，等物件傳入時，就會去呼叫該方法 -<br>
+    其實和 _.property 有點像，只是 _.method 是取「函式並呼叫」，_.property 是取「值」
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const objects = [
+  &#123; user: &#123; greet: (msg: string) => `Hello, $&#123;msg&#125;` &#125; &#125;,
+  &#123; user: &#123; greet: (msg: string) => `Hi, $&#123;msg&#125;` &#125; &#125;
+];
+
+// 建立 callGreet 會呼叫 user.greet
+const callGreet = _.method('user.greet', ['World']);
+
+console.log(callGreet(objects[0]));
+// 👉 "Hello, World"
+
+console.log(callGreet(objects[1]));
+// 👉 "Hi, World"
+
+
+// 也可以用 map，對整個陣列呼叫一次
+const results = objects.map(callGreet);
+console.log(results);
+// 👉 ["Hello, World", "Hi, World"]
+
+沒有對應的 → undefined 不會報錯
+  </code></pre>
+  </div>
+
+  <!-- property -->
+  <div class="title-content" [attr.id]="'_.property'">_.property(path)</div>
+  <div class="text-content">
+    回傳一個函式<br>
+    這個函式會去 讀取物件中指定 path 的值<br>
+    要告訴它 方法的位置（path） <br>
+    有點像是把「取值」動作包起來，方便在 map、filter 直接用
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const getName = _.property('user.name');
+
+getName(&#123; user: &#123; name: 'Alice' &#125; &#125;); // "Alice"
+getName(&#123; user: &#123; name: 'Bob' &#125; &#125;);   // "Bob"
+
+// 理論上可以丟「任何東西」進去
+getName(&#123; user: &#123; name: 'Alice' &#125; &#125;);
+// "Alice"  ← 正常情況
+
+getName(&#123; user: &#123;&#125; &#125;);
+// undefined  ← user 有但沒有 name
+
+getName(&#123;&#125;);
+// undefined  ← 沒有 user
+
+getName(null);
+// undefined  ← 輸入是 null
+
+getName(undefined);
+// undefined  ← 輸入是 undefined
+
+getName(123 as any);
+// undefined  ← 丟奇怪型別，lodash 也只會回 undefined
+
+
+// 路徑可以是陣列
+const getFirstTag = _.property(['tags', 0]);
+
+getFirstTag(&#123; tags: ['a', 'b', 'c'] &#125;); // "a"
+
+//搭配是 map 或 filter
+const users = [
+  &#123; id: 1, name: 'Amy' &#125;,
+  &#123; id: 2, name: 'Ben' &#125;,
+  &#123; id: 3, name: 'Cat' &#125;
+];
+
+// 快速取 name
+console.log(users.map(_.property('name')));
+// ["Amy", "Ben", "Cat"]
+
+// 取 id 大於 1 的
+console.log(users.filter(u => _.property('id')(u) > 1));
+// [&#123;id: 2, name: "Ben"&#125;, &#123;id: 3, name: "Cat"&#125;]
+
+  </code></pre>
+  </div>
+
+  <!-- methodOf -->
+  <div class="title-content" [attr.id]="'_.methodOf'">_.methodOf(object, [args])</div>
+  <div class="text-content">
+    產生一個函式<br>
+    這個函式會接受一個 path<br>
+    然後去呼叫 object 上對應的 method<br>
+    和 要傳的參數（args）<br>
+    _.method 是先知道 path，套在不同物件。<br>
+    _.methodOf 則是先知道 物件，再決定要呼叫哪個 path 的 method。
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const obj = &#123;
+  user: &#123;
+    greet: (msg: string) => `Hello, $&#123;msg&#125;`,
+    bye: (msg: string) => `Goodbye, $&#123;msg&#125;`,
+  &#125;,
+&#125;;
+
+// methodOf: 建立一個依據 path 呼叫 obj 的函式
+// 建立函式時傳入參數
+const callFromObj = _.methodOf(obj, ['Alice']);
+
+callFromObj('user.bye'); // GoodBye, Alice
+callFromObj('user.greet'); // Hello, Alice
+
+// _.method: 固定 path，再把物件丟進去
+const greetFn = _.method('user.greet', ['World']);
+greetFn(obj); // Hello, World
+
+// _.methodOf: 固定物件，再把 path 丟進去
+const callFn = _.methodOf(obj, ['World']);
+callFn('user.greet'); // Hello, World
+
+  </code></pre>
+  </div>
+
+  <!-- propertyOf -->
+  <div class="title-content" [attr.id]="'_.propertyOf'">_.propertyOf(object)</div>
+  <div class="text-content">
+    _.property 的反向版本<br>
+    會先固定 物件，回傳一個函式，這個函式接受 path，回傳物件上對應的值<br>
+    _.property(path) → 固定 path，等物件丟進來<br>
+    _.propertyOf(object) → 固定物件，等 path 丟進來
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const obj = &#123;
+  user: &#123; name: 'Alice', age: 25 &#125;,
+  settings: &#123; theme: 'dark' &#125;
+&#125;;
+
+// 建立固定物件的函式
+const getProp = _.propertyOf(obj);
+
+getProp('user.name');     // "Alice"
+getProp('user.age');      // 25
+getProp('settings.theme'); // "dark"
+getProp('unknown.path');  // undefined
+
+// 搭配 map、filter
+const obj = &#123; user1: &#123; id: 1 &#125;, user2: &#123; id: 2 &#125; &#125;;
+const getId = _.propertyOf(obj);
+
+['user1','user2','user3'].map(getId); // [1,2,undefined]
+  </code></pre>
+  </div>
+
+  <!-- mixin -->
+  <div class="title-content" [attr.id]="'_.mixin'">_.mixin([object=lodash], source, [options=&#123;&#125;])</div>
+  <div class="text-content">
+    可以 把自訂函式加入到 lodash 或其他物件<br>
+    可以把自己的工具函式加到 _ 上，像 lodash 內建的方法一樣呼叫<br>
+    如果名稱撞到 lodash 原本的方法，會 直接覆蓋原本的方法 😅
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 1. 加到 lodash _ 上
+
+// 自訂函式
+const myFuncs = &#123;
+  double: (x: number) => x * 2,
+  greet: (name: string) => `Hi $&#123;name&#125;`
+&#125;
+
+// 加入 lodash
+_.mixin(myFuncs);
+
+_.double(5);      // 10
+_.greet('Alice'); // "Hi Alice"
+
+// 支援鏈式
+_([1,2,3]).map(_.double).value(); // [2,4,6]
+
+// 2. 加到自己的物件上
+
+const utils: any = &#123;&#125;;
+
+_.mixin(utils, &#123;
+  square: (n: number) => n * n
+&#125;);
+
+utils.square(4); // 16
+  </code></pre>
+  </div>
+
+  <!-- noConflict -->
+  <div class="title-content" [attr.id]="'_.noConflict'">_.noConflict()</div>
+  <div class="text-content">
+    專案可能同時載入了 多個 _ 變數（例如另一個套件也用 _）<br>
+    _.noConflict() 可以 把 lodash 的 _ 還給先前的值，避免衝突
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 先前其他套件也用了 _
+window._ = 'SomeOtherLib';
+
+import _ from 'lodash';
+
+console.log(_); // lodash
+
+const lodash = _.noConflict(); // 把 _ 還給 window._
+
+console.log(window._); // "SomeOtherLib"
+lodash.max([1,2,3]); // 3
+  </code></pre>
+  </div>
+
+  <!-- noop -->
+  <div class="title-content" [attr.id]="'_.noop'">_.noop()</div>
+  <div class="text-content">
+    lodash 提供的一個 空函式（No Operation）<br>
+    它什麼都不做，也不回傳任何值<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+function fetchData(callback = _.noop) &#123;
+  // 模擬資料請求
+  console.log('fetching data...');
+  callback(); // 如果沒傳 callback，就不會出錯
+&#125;
+
+// 呼叫時沒傳 callback
+fetchData(); // 不會報錯，也不做任何額外動作
+
+// 或是測試可以用?
+spyOn(obj, 'someMethod').and.callFake(_.noop);
+  </code></pre>
+  </div>
+
+  <!-- nthArg -->
+  <div class="title-content" [attr.id]="'_.nthArg'">_.nthArg([n=0])</div>
+  <div class="text-content">
+    會 建立一個新函式<br>
+    這個函式呼叫時會回傳 第 n 個參數<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+// 回傳第 2 個參數
+
+const secondArg = _.nthArg(1); // 1 = 第二個參數
+console.log(secondArg('a', 'b', 'c')); // "b"
+
+// 回傳最後一個參數
+const lastArg = _.nthArg(-1);
+console.log(lastArg('x', 'y', 'z')); // "z"
+
+// 可以取代這種寫法
+const getSecond = (...args) => args[1];
+
+// 改用
+_.nthArg(1)
+  </code></pre>
+  </div>
+
+  <!-- over -->
+  <div class="title-content" [attr.id]="'_.over'">_.over([iteratees=[_.identity]])</div>
+  <div class="text-content">
+    會 建立一個新函式<br>
+    這個函式呼叫時會同時執行多個函式（iteratees），並把結果組成陣列回傳<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const fn = _.over([
+  Math.min,
+  Math.max
+]);
+
+// 傳進去的參數會同時傳給 Math.min 和 Math.max，回傳結果陣列 [最小, 最大]
+fn(1, 2, 3, 4, 5); // [1, 5]
+
+// 也可以用 物件屬性的路徑
+const user = &#123; name: 'Alice', age: 30 &#125;;
+
+const overProps = _.over([
+  'name',
+  'age'
+]);
+
+overProps(user); // ['Alice', 30]
+// 依序取出 name 和 age，回傳陣列
+  </code></pre>
+  </div>
+
+  <!-- overEvery -->
+  <div class="title-content" [attr.id]="'_.overEvery'">_.overEvery([predicates=[_.identity]])</div>
+  <div class="text-content">
+    會 建立一個新函式<br>
+    這個函式呼叫時會 依次執行多個 predicate（判斷函式）<br>
+    如果 每個都回傳 true，整個函式才回傳 true<br>
+    用起來跟&&蠻像
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const isPositiveAndInteger = _.overEvery([
+  n => n > 0,
+  Number.isInteger
+]);
+
+// 判斷一個數字 既大於 0 又是整數
+isPositiveAndInteger(5); // true
+isPositiveAndInteger(-3); // false
+isPositiveAndInteger(4.5); // false
+
+// 物件檢查
+const user = &#123; age: 25, name: 'Alice', active: true &#125;;
+
+const isAdultActive = _.overEvery([
+  u => u.age >= 18,
+  u => u.active
+]);
+
+isAdultActive(user); // true
+
+// 自動檢查 user.active 和 user.age 是否 truthy
+const checkUser = _.overEvery(['active', 'age']);
+  </code></pre>
+  </div>
+
+  <!-- overSome -->
+  <div class="title-content" [attr.id]="'_.overSome'">_.overSome([predicates=[_.identity]])</div>
+  <div class="text-content">
+    會 建立一個新函式<br>
+    這個函式呼叫時會 依次執行多個 predicate（判斷函式）<br>
+    如果 有一個回傳 true，整個函式就回傳 true<br>
+  </div>
+  <div class="code-content">
+    <pre><code class="language-typescript">
+const isNegativeOrDecimal = _.overSome([
+  n => n < 0,
+  n => !Number.isInteger(n)
+]);
+
+// 判斷數字 負數或小數就算 true
+isNegativeOrDecimal(-5);  // true
+isNegativeOrDecimal(3.14); // true
+isNegativeOrDecimal(10);  // false
+
+// 物件檢查
+const user = &#123; age: 17, name: 'Bob', active: false &#125;;
+
+const canAccess = _.overSome([
+  u => u.age >= 18,
+  u => u.active
+]);
+
+canAccess(user); // false
+
+// 只要 user.active 或 user.isAdmin 是 truthy 就算 true
+const checkUser = _.overSome(['active', 'isAdmin']);
+  </code></pre>
+  </div>
+</div>
